@@ -3,10 +3,15 @@ package main
 import (
 	"log"
 
+	"github.com/TomekPetrykowski/egt/assets"
 	"github.com/TomekPetrykowski/egt/game"
 	"github.com/TomekPetrykowski/egt/settings"
 	"github.com/hajimehoshi/ebiten/v2"
 )
+
+func init() {
+	assets.MustLoadAssets()
+}
 
 func main() {
 	config := game.Config{
