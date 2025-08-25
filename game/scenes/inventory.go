@@ -24,31 +24,58 @@ type InventoryScene struct {
 }
 
 func NewInventoryScene() *InventoryScene {
-	gridSizeX := 11
+	gridSizeX := 4
 	tileSize := settings.INVENTORY_SLOT_SIZE
-	gridSizeY := 4
+	gridSizeY := 8
 	gridSpace := settings.INVENTORY_GAP
 	walls := make([]*entities.Wall, gridSizeX*gridSizeY)
 	walls[1] = &entities.Wall{}
 	walls[3] = &entities.Wall{Flavor: entities.Bland}
 	walls[7] = &entities.Wall{Flavor: entities.Salty} //TODO:load from player data
-	grid := make([]*entities.WallSlot, gridSizeX*gridSizeY)
-	// for i,dice := {
+	inv_dice := make([]*entities.Dice, 3)
+	diewalls1 := make([]*entities.Wall, 6)
+	for i, _ := range diewalls1 {
+		diewalls1[i] = &entities.Wall{Power: i + 1}
+	}
+	diewalls2 := make([]*entities.Wall, 6)
+	for i, _ := range diewalls2 {
+		diewalls2[i] = &entities.Wall{Power: i + 1, Flavor: 1}
+	}
+	diewalls3 := make([]*entities.Wall, 4)
+	for i, _ := range diewalls3 {
+		diewalls3[i] = &entities.Wall{Power: i + 1, Flavor: 2}
+	}
+	die1 := &entities.Dice{Walls: &diewalls1}
+	die2 := &entities.Dice{Walls: &diewalls2}
+	die3 := &entities.Dice{Walls: &diewalls3}
+	inv_dice[0] = die1
+	inv_dice[1] = die2
+	inv_dice[2] = die3
+	inventory := &entities.Inventory{Dice: &inv_dice, Walls: &walls}
+	diceWalls := 0
 
-	// }
-	for i, wall := range walls {
-		grid[i] = &entities.WallSlot{Wall: wall, Rect: engine.NewRect(float64((tileSize+gridSpace)*(i%gridSizeX)+gridSpace), float64((tileSize+gridSpace)*(i/gridSizeX)+gridSpace), float64(tileSize), float64(tileSize))}
+	for _, dice := range *inventory.Dice {
+		diceWalls += len(*dice.Walls)
+	}
+	grid := make([]*entities.WallSlot, gridSizeX*gridSizeY+diceWalls)
+	current := 0
+	for i, dice := range *inventory.Dice {
+		for j, wall := range *dice.Walls {
+			grid[current] = &entities.WallSlot{Wall: wall, Rect: engine.NewRect(float64((tileSize+gridSpace)*(j)+gridSpace), float64((tileSize+gridSpace)*(i)+gridSpace), float64(tileSize), float64(tileSize))}
+			current++
+		}
+
+	}
+	for i, wall := range *inventory.Walls {
+		grid[i+diceWalls] = &entities.WallSlot{Wall: wall, Rect: engine.NewRect(float64((tileSize+gridSpace)*(i%gridSizeX+7)+gridSpace), float64((tileSize+gridSpace)*(i/gridSizeX)+gridSpace), float64(tileSize), float64(tileSize))}
 	}
 	return &InventoryScene{
-		loaded:    false,
-		tileSize:  tileSize,
-		gridSizeX: gridSizeX,
-		gridSizeY: gridSizeY,
-		gridSpace: 5,
-		inventory: &entities.Inventory{
-			Walls: &walls,
-			Die:   &[]*entities.Dice{{}},
-		},
+		loaded:       false,
+		tileSize:     tileSize,
+		gridSizeX:    gridSizeX,
+		gridSizeY:    gridSizeY,
+		gridSpace:    5,
+		inventory:    inventory,
 		grid:         grid,
 		selectedSlot: -1,
 	}
