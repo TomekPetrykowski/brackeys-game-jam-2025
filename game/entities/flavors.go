@@ -1,8 +1,8 @@
 package entities
 
 import (
+	"github.com/TomekPetrykowski/egt/assets"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 const (
@@ -18,26 +18,19 @@ const (
 func GetImageFromFlavor(id int) *ebiten.Image { //TODO: this is badly made :c
 	switch id {
 	case Sweet:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/sweet.png")
-		return image
+		return assets.WallSweet
 	case Bitter:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/bitter.png")
-		return image
+		return assets.WallBitter
 	case Sour:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/sour.png")
-		return image
+		return assets.WallSour
 	case Bland:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/bland.png")
-		return image
+		return assets.WallBland
 	case Umami:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/umami.png")
-		return image
+		return assets.WallUmami
 	case Salty:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/salty.png")
-		return image
+		return assets.WallSalty
 	case Spicy:
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/spicy.png")
-		return image
+		return assets.WallSpicy
 	default:
 		return nil
 	}
