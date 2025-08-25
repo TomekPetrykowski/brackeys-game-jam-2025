@@ -2,6 +2,7 @@ package entities
 
 import (
 	"github.com/TomekPetrykowski/egt/engine"
+	"github.com/TomekPetrykowski/egt/settings"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -15,7 +16,8 @@ type WallSlot struct {
 
 func (w *WallSlot) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
-	opts.GeoM.Scale(0.75, 0.75) //make sure the image is the same size as tileSize
+	scale := float64(settings.INVENTORY_SLOT_SIZE) / float64(settings.WALL_SPRITE_SIZE)
+	opts.GeoM.Scale(scale, scale) //make sure the image is the same size as tileSize
 	if w.IsHoveredOver || w.IsSelected {
 		opts.GeoM.Scale(1.1, 1.1)
 		opts.GeoM.Translate(-w.Rect.Width*0.05, -w.Rect.Height*0.05)
