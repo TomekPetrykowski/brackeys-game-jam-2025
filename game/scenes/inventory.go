@@ -23,12 +23,8 @@ type InventoryScene struct {
 	currentSlot  int
 }
 
-func NewInventoryScene() *InventoryScene {
-	gridSizeX := 4
-	tileSize := settings.INVENTORY_SLOT_SIZE
-	gridSizeY := 8
-	gridSpace := settings.INVENTORY_GAP
-	walls := make([]*entities.Wall, gridSizeX*gridSizeY)
+func ExampleInventory(numOfWalls int) *entities.Inventory {
+	walls := make([]*entities.Wall, numOfWalls)
 	walls[1] = &entities.Wall{}
 	walls[3] = &entities.Wall{Flavor: entities.Bland}
 	walls[7] = &entities.Wall{Flavor: entities.Salty} //TODO:load from player data
@@ -51,9 +47,18 @@ func NewInventoryScene() *InventoryScene {
 	inv_dice[0] = die1
 	inv_dice[1] = die2
 	inv_dice[2] = die3
-	inventory := &entities.Inventory{Dice: &inv_dice, Walls: &walls}
-	diceWalls := 0
+	return &entities.Inventory{Dice: &inv_dice, Walls: &walls}
 
+}
+
+func NewInventoryScene() *InventoryScene {
+	gridSizeX := 4
+	tileSize := settings.INVENTORY_SLOT_SIZE
+	gridSizeY := 8
+	gridSpace := settings.INVENTORY_GAP
+
+	diceWalls := 0
+	inventory := ExampleInventory(gridSizeX * gridSizeY)
 	for _, dice := range *inventory.Dice {
 		diceWalls += len(*dice.Walls)
 	}
