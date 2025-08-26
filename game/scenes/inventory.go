@@ -26,8 +26,14 @@ type InventoryScene struct {
 func ExampleInventory(numOfWalls int) *entities.Inventory {
 	walls := make([]*entities.Wall, numOfWalls)
 	walls[1] = &entities.Wall{}
+	walls[2] = &entities.Wall{Flavor: entities.Bitter}
 	walls[3] = &entities.Wall{Flavor: entities.Bland}
-	walls[7] = &entities.Wall{Flavor: entities.Salty} //TODO:load from player data
+	walls[7] = &entities.Wall{Flavor: entities.Salty}
+	walls[11] = &entities.Wall{Flavor: entities.Sweet}
+	walls[15] = &entities.Wall{Flavor: entities.Spicy}
+	walls[19] = &entities.Wall{Flavor: entities.Umami}
+
+	//TODO:load from player data
 	inv_dice := make([]*entities.Dice, 3)
 	diewalls1 := make([]*entities.Wall, 6)
 	for i, _ := range diewalls1 {
