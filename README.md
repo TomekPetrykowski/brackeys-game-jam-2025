@@ -3,9 +3,13 @@
 ## Devlog
 - `2025-08-25`:
   - Start working on inventory system
+  - Add embeding system for sprites
+  - Draw background image
+- `2025-08-26`:
+  - 
 
 ## TODO:
-- [ ] add embeded assets for performance
+- [x] add embeded assets for performance
 - [ ] add player
   - [ ] add simple UI for him (buttons)
   - [ ] with fields like inventories, hp, mana

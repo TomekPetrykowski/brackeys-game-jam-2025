@@ -15,7 +15,7 @@ const (
 	Umami
 )
 
-func GetImageFromFlavor(id int) *ebiten.Image { //TODO: this is badly made :c
+func GetImageFromFlavor(id int) *ebiten.Image {
 	switch id {
 	case Sweet:
 		return assets.WallSweet
@@ -32,6 +32,6 @@ func GetImageFromFlavor(id int) *ebiten.Image { //TODO: this is badly made :c
 	case Spicy:
 		return assets.WallSpicy
 	default:
-		return nil
+		return assets.WallEmpty
 	}
 }

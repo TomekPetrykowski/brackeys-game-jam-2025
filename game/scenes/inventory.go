@@ -89,15 +89,16 @@ func NewInventoryScene() *InventoryScene {
 		inventory:    inventory,
 		grid:         grid,
 		selectedSlot: -1,
+		currentSlot:  -1,
 	}
 }
 
 func (s *InventoryScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
-	ebitenutil.DebugPrint(screen, "Inventory!")
 	for _, slot := range s.grid {
 		slot.Draw(screen)
 	}
+	ebitenutil.DebugPrint(screen, "Inventory!")
 }
 
 func (s *InventoryScene) Update() engine.SceneId {
@@ -139,16 +140,13 @@ func (s *InventoryScene) Update() engine.SceneId {
 
 func (s *InventoryScene) FirstLoad() {
 	s.loaded = true
-
 }
 
 func (s *InventoryScene) IsLoaded() bool {
 	return s.loaded
 }
 
-func (s *InventoryScene) OnEnter() {
-
-}
+func (s *InventoryScene) OnEnter() {}
 
 func (s *InventoryScene) OnExit() {}
 

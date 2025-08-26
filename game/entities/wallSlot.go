@@ -1,6 +1,9 @@
 package entities
 
 import (
+	"fmt"
+
+	"github.com/TomekPetrykowski/egt/assets"
 	"github.com/TomekPetrykowski/egt/engine"
 	"github.com/TomekPetrykowski/egt/settings"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -15,22 +18,25 @@ type WallSlot struct {
 }
 
 func (w *WallSlot) Draw(screen *ebiten.Image) {
+	var image *ebiten.Image
 	opts := ebiten.DrawImageOptions{}
 	scale := float64(settings.INVENTORY_SLOT_SIZE) / float64(settings.WALL_SPRITE_SIZE)
 	opts.GeoM.Scale(scale, scale) //make sure the image is the same size as tileSize
+
 	if w.IsHoveredOver || w.IsSelected {
 		opts.GeoM.Scale(1.1, 1.1)
 		opts.GeoM.Translate(-w.Rect.Width*0.05, -w.Rect.Height*0.05)
 	}
-	opts.GeoM.Translate(w.Rect.Pos.Unpack())
-	if w.Wall != nil {
-		screen.DrawImage(GetImageFromFlavor(w.Wall.Flavor), &opts)
-		//dorysuj numerek
-	} else {
-		image, _, _ := ebitenutil.NewImageFromFile("assets/graphics/walls/empty.png")
-		screen.DrawImage(image, &opts)
 
+	opts.GeoM.Translate(w.Rect.Pos.Unpack())
+
+	if w.Wall != nil {
+		image = GetImageFromFlavor(w.Wall.Flavor)
+		ebitenutil.DebugPrintAt(image, fmt.Sprintf("%d", w.Wall.Power), 12, 8) // temp solution, it has to be rendered text on image surface
+	} else {
+		image = assets.WallEmpty
 	}
+	screen.DrawImage(image, &opts)
 }
 
 func (w *WallSlot) IsMouseInside(x, y float64) bool {
