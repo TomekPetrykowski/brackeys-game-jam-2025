@@ -1,5 +1,7 @@
 package entities
 
+import "math/rand"
+
 type Dice struct {
 	Walls *[]*Wall
 }
@@ -10,4 +12,10 @@ func (d *Dice) GetCost() int {
 		cost += wall.Cost
 	}
 	return cost
+}
+
+func (d *Dice) Roll() *Wall {
+	index := rand.Int() % len(*d.Walls)
+	walls := *d.Walls
+	return walls[index]
 }
