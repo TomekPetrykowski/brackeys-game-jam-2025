@@ -24,8 +24,8 @@ func (w *WallSlot) Draw(screen *ebiten.Image) {
 	opts.GeoM.Scale(scale, scale) //make sure the image is the same size as tileSize
 
 	if w.IsHoveredOver || w.IsSelected {
-		opts.GeoM.Scale(1.1, 1.1)
-		opts.GeoM.Translate(-w.Rect.Width*0.05, -w.Rect.Height*0.05)
+		opts.GeoM.Scale(1.08, 1.08)
+		opts.GeoM.Translate(-w.Rect.Width*0.04, -w.Rect.Height*0.04)
 	}
 
 	opts.GeoM.Translate(w.Rect.Pos.Unpack())
