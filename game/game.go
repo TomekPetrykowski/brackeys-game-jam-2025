@@ -24,7 +24,8 @@ func NewGame(config *Config) *Game {
 	// Add new scenes here
 	g.sceneManager.AddScene(scenes.StartSceneId, scenes.NewStartScene())
 	g.sceneManager.AddScene(scenes.InventorySceneId, scenes.NewInventoryScene())
-	g.sceneManager.SetActiveSceneId(scenes.InventorySceneId)
+	g.sceneManager.AddScene(scenes.BattleSceneId, scenes.NewBattleScene())
+	g.sceneManager.SetActiveSceneId(scenes.BattleSceneId)
 	g.Set(config)
 
 	return &g
