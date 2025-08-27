@@ -36,15 +36,15 @@ func ExampleInventory(numOfWalls int) *entities.Inventory {
 	//TODO:load from player data
 	inv_dice := make([]*entities.Dice, 3)
 	diewalls1 := make([]*entities.Wall, 6)
-	for i, _ := range diewalls1 {
+	for i := 0; i < len(diewalls1); i++ {
 		diewalls1[i] = &entities.Wall{Power: i + 1}
 	}
 	diewalls2 := make([]*entities.Wall, 6)
-	for i, _ := range diewalls2 {
+	for i := 0; i < len(diewalls2); i++ {
 		diewalls2[i] = &entities.Wall{Power: i + 1, Flavor: 1}
 	}
 	diewalls3 := make([]*entities.Wall, 4)
-	for i, _ := range diewalls3 {
+	for i := 0; i < len(diewalls3); i++ {
 		diewalls3[i] = &entities.Wall{Power: i + 1, Flavor: 2}
 	}
 	die1 := &entities.Dice{Walls: &diewalls1}
@@ -77,8 +77,9 @@ func NewInventoryScene() *InventoryScene {
 		}
 
 	}
+	inventoryStartX := (settings.WINDOW_WIDTH - ((tileSize+gridSpace)*gridSizeX+gridSpace)*2) / 2
 	for i, wall := range *inventory.Walls {
-		grid[i+diceWalls] = &entities.WallSlot{Wall: wall, Rect: engine.NewRect(float64((tileSize+gridSpace)*(i%gridSizeX+7)+gridSpace), float64((tileSize+gridSpace)*(i/gridSizeX)+gridSpace), float64(tileSize), float64(tileSize))}
+		grid[i+diceWalls] = &entities.WallSlot{Wall: wall, Rect: engine.NewRect(float64((tileSize+gridSpace)*(i%gridSizeX)+gridSpace+inventoryStartX), float64((tileSize+gridSpace)*(i/gridSizeX)+gridSpace), float64(tileSize), float64(tileSize))}
 	}
 	return &InventoryScene{
 		loaded:       false,
@@ -109,7 +110,6 @@ func (s *InventoryScene) Update() engine.SceneId {
 	for i, slot := range s.grid {
 		if slot.IsMouseInside(x, y) {
 			s.currentSlot = i
-			break
 		}
 	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
