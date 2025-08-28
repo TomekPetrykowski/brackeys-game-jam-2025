@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"strconv"
+
 	"github.com/TomekPetrykowski/egt/engine"
 	"github.com/TomekPetrykowski/egt/engine/utils"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -70,7 +72,11 @@ func (e *Enemy) Update() {
 func (e *Enemy) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(e.Rect.Pos.Unpack())
-	// opts.GeoM.Translate(e.Offset.Unpack())
+	if e.Offset != nil {
+		opts.GeoM.Translate(e.Offset.Unpack())
+	}
+	//
+	//
 	if e.Health <= 0 {
 		opts.ColorScale.SetB(0)
 		opts.ColorScale.SetG(0)
@@ -89,7 +95,8 @@ func (e *Enemy) IsMouseInside(x, y float64) bool {
 
 func (e *Enemy) Action(player *Player) {
 	wall := e.Dice.Roll()
-	switch wall.Flavor {
+	println("Enemy rolled a" + strconv.Itoa(wall.Power))
+	switch wall.Flavor { //implement every flavor and targeting logic
 	case Sour:
 		player.Hit(wall.Power + e.AttackModifier)
 	case Salty:

@@ -16,6 +16,7 @@ type DiceContainer struct {
 	IsHoveredOver bool
 	LastWall      *Wall
 	Rect          *engine.Rect
+	Cost          int
 }
 
 func (d *DiceContainer) Draw(screen *ebiten.Image) {
@@ -37,6 +38,7 @@ func (d *DiceContainer) Draw(screen *ebiten.Image) {
 
 func (d *DiceContainer) SetDice(dice *Dice) {
 	d.Dice = dice
+	d.Cost = dice.CalculateCost()
 	d.LastWall = (*dice.Walls)[0]
 }
 

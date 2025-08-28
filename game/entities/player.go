@@ -8,6 +8,7 @@ type Player struct {
 	Shield         int
 	AttackModifier int
 	Mana           int
+	MaxMana        int
 }
 
 // Buff implements BattleActor.
@@ -53,6 +54,13 @@ func (p *Player) Hit(power int) {
 
 func (p *Player) Roll(diceId int) *Wall {
 	return (*p.Inventory.Dice)[diceId].Roll()
+}
+
+func (p *Player) AddMana(amount int) {
+	p.Mana += amount
+	if p.Mana > p.MaxMana {
+		p.Mana = p.MaxMana
+	}
 }
 
 func (p *Player) Action(wall *Wall, targets []BattleActor) {
