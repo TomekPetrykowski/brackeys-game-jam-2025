@@ -16,6 +16,5 @@ func (d *Dice) GetCost() int {
 
 func (d *Dice) Roll() *Wall {
 	index := rand.Int() % len(*d.Walls)
-	walls := *d.Walls
-	return walls[index]
+	return (*d.Walls)[index]
 }
