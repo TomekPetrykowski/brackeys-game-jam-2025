@@ -5,7 +5,6 @@ import (
 
 	"github.com/TomekPetrykowski/egt/assets"
 	"github.com/TomekPetrykowski/egt/engine"
-	"github.com/TomekPetrykowski/egt/settings"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -25,15 +24,16 @@ func (d *DiceContainer) Draw(screen *ebiten.Image) {
 	image := (*ebiten.Image)(nil)
 	if d.LastWall != nil {
 		image = GetImageFromFlavor(d.LastWall.Flavor)
-		ebitenutil.DebugPrintAt(image, fmt.Sprintf("%d", d.LastWall.Power), 12, 8) // temp solution, it has to be rendered text on image surface
+		screen.DrawImage(image, &opts)
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("%d", d.LastWall.Power), int(d.Rect.Pos.X)+12, int(d.Rect.Pos.Y)+8)
 	} else {
 		image = assets.WallEmpty
-	}
-	screen.DrawImage(image, &opts)
-	if d.IsHoveredOver {
-		opts.GeoM.Translate(0, settings.INVENTORY_SLOT_SIZE*2)
 		screen.DrawImage(image, &opts)
 	}
+	// if d.IsHoveredOver {
+	// 	opts.GeoM.Translate(0, settings.INVENTORY_SLOT_SIZE*2)
+	// 	screen.DrawImage(image, &opts)
+	// }
 }
 
 func (d *DiceContainer) SetDice(dice *Dice) {
