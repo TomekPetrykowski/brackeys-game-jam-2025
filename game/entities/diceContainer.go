@@ -1,0 +1,56 @@
+package entities
+
+import (
+	"fmt"
+
+	"github.com/TomekPetrykowski/egt/assets"
+	"github.com/TomekPetrykowski/egt/engine"
+	"github.com/TomekPetrykowski/egt/settings"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+)
+
+type DiceContainer struct {
+	Dice          *Dice
+	Clickable     bool
+	IsHoveredOver bool
+	LastWall      *Wall
+	Rect          *engine.Rect
+}
+
+func (d *DiceContainer) Draw(screen *ebiten.Image) {
+	opts := ebiten.DrawImageOptions{}
+	opts.GeoM.Translate(d.Rect.Pos.Unpack())
+	image := (*ebiten.Image)(nil)
+	if d.LastWall != nil {
+		image = GetImageFromFlavor(d.LastWall.Flavor)
+		ebitenutil.DebugPrintAt(image, fmt.Sprintf("%d", d.LastWall.Power), 12, 8) // temp solution, it has to be rendered text on image surface
+	} else {
+		image = assets.WallEmpty
+	}
+	screen.DrawImage(image, &opts)
+	if d.IsHoveredOver {
+		opts.GeoM.Translate(0, settings.INVENTORY_SLOT_SIZE*2)
+		screen.DrawImage(image, &opts)
+	}
+}
+
+func (d *DiceContainer) SetDice(dice *Dice) {
+	d.Dice = dice
+	d.LastWall = (*dice.Walls)[0]
+}
+
+func (d *DiceContainer) IsMouseInside(x, y float64) bool {
+	if d.Rect.IsPointInside(x, y) {
+		d.IsHoveredOver = true
+	} else {
+		d.IsHoveredOver = false
+	}
+	return d.IsHoveredOver
+}
+
+func (d *DiceContainer) Roll() *Wall {
+	d.LastWall = d.Dice.Roll()
+	return d.LastWall
+
+}
