@@ -140,8 +140,7 @@ func (s *BattleScene) Update() engine.SceneId {
 			} else {
 				println("Not enough mana")
 			}
-		}
-		if s.endTurnButton.Rect.IsPointInside(x, y) {
+		} else if s.endTurnButton.Rect.IsPointInside(x, y) {
 			for _, enemy := range s.enemies {
 				enemy.Action(s.player)
 			}
