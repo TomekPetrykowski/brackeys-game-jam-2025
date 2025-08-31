@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/TomekPetrykowski/egt/engine"
+	"github.com/TomekPetrykowski/egt/engine/utils"
 	"github.com/TomekPetrykowski/egt/game/entities"
 	"github.com/TomekPetrykowski/egt/settings"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -14,12 +15,13 @@ import (
 )
 
 type BattleScene struct {
-	player        *entities.Player
-	enemies       []*entities.Enemy
-	playerDice    []*entities.DiceContainer
-	loaded        bool
-	rolledWall    *entities.Wall
-	endTurnButton *entities.Button
+	player     *entities.Player
+	enemies    *[]*entities.Enemy
+	playerDice []*entities.DiceContainer
+	loaded     bool
+	rolledWall *entities.Wall
+	// endTurnButton *entities.Button
+	button *engine.Button
 }
 
 func ExampleDice(numOfWalls, flavor int) *entities.Dice {
@@ -41,6 +43,7 @@ func NewBattleScene() *BattleScene {
 	enemy2 := &entities.Enemy{Dice: die2, Health: 30, MaxHealth: 30, Sprite: enemySprite2, Rect: engine.NewRect(200, 100, 100, 100)}
 	enemies[0] = enemy1
 	enemies[1] = enemy2
+	enemiesPointer := &enemies
 	inventory := &entities.Inventory{}
 	incentoryDice := make([]*entities.Dice, 7)
 	for i := range 7 {
@@ -56,13 +59,28 @@ func NewBattleScene() *BattleScene {
 		diceSlot.SetDice(dice)
 		playerDice[i] = diceSlot
 	}
+	button := &engine.Button{}
+	button.Rect = engine.NewRect((settings.WINDOW_WIDTH/settings.SCALE)-55, float64(diceStartY), 50, settings.INVENTORY_SLOT_SIZE)
+	button.Sprite = utils.CreatePlaceholderImage(&utils.PlaceholderImage{Width: int(button.Rect.Width), Height: int(button.Rect.Height), Color: color.RGBA{100, 100, 100, 255}})
+	button.ClickSprite = utils.CreatePlaceholderImage(&utils.PlaceholderImage{Width: int(button.Rect.Width), Height: int(button.Rect.Height), Color: color.RGBA{80, 80, 80, 255}})
+	button.HoverSprite = utils.CreatePlaceholderImage(&utils.PlaceholderImage{Width: int(button.Rect.Width), Height: int(button.Rect.Height), Color: color.RGBA{120, 120, 120, 255}})
+	button.Text = "button"
+	a := func() {
+		for _, enemy := range enemies {
+			enemy.Action(player)
+		}
+		player.AddMana(15)
+	}
+
+	button.OnClick = &a
 
 	return &BattleScene{
-		loaded:        false,
-		enemies:       enemies,
-		player:        player,
-		playerDice:    playerDice,
-		endTurnButton: &entities.Button{Rect: engine.NewRect((settings.WINDOW_WIDTH/settings.SCALE)-55, float64(diceStartY), 50, settings.INVENTORY_SLOT_SIZE), Text: "End Turn", Color: color.RGBA{0, 0, 0, 255}},
+		loaded:     false,
+		enemies:    enemiesPointer,
+		player:     player,
+		playerDice: playerDice,
+		button:     button,
+		// endTurnButton: &entities.Button{Rect: , Text: "End Turn", Color: color.RGBA{0, 0, 0, 255}},
 	}
 }
 
@@ -74,7 +92,7 @@ func (s *BattleScene) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
 	opts.GeoM.Scale(scaleX, scaleY)
 	screen.DrawImage(background, &opts)
-	for _, enemy := range s.enemies {
+	for _, enemy := range *s.enemies {
 		enemy.Draw(screen)
 	}
 
@@ -85,7 +103,9 @@ func (s *BattleScene) Draw(screen *ebiten.Image) {
 	if s.rolledWall != nil {
 		ebitenutil.DebugPrint(screen, "Click an enemy to attack")
 	}
-	s.endTurnButton.Draw(screen)
+	s.button.Draw(screen)
+	// s.endTurnButton.Draw(screen)
+
 	ebitenutil.DebugPrintAt(screen, "Hp:"+strconv.Itoa(s.player.Health), 0, (settings.WINDOW_HEIGHT/settings.SCALE)-20)
 	ebitenutil.DebugPrintAt(screen, "Mp:"+strconv.Itoa(s.player.Mana), 0, (settings.WINDOW_HEIGHT/settings.SCALE)-40)
 
@@ -103,7 +123,7 @@ func (s *BattleScene) Update() engine.SceneId {
 			currentDice = i
 		}
 	}
-	for i, enemy := range s.enemies {
+	for i, enemy := range *s.enemies {
 		if enemy.IsMouseInside(x, y) {
 			currentEnemy = i
 		}
@@ -112,10 +132,10 @@ func (s *BattleScene) Update() engine.SceneId {
 		if s.rolledWall != nil { //rolled wall awaits target
 			if currentEnemy != -1 {
 				target := make([]entities.BattleActor, 1)
-				target[0] = s.enemies[currentEnemy]
+				target[0] = (*s.enemies)[currentEnemy]
 				s.player.Action(s.rolledWall, target)
 				s.rolledWall = nil
-				print(s.enemies[currentEnemy].Health)
+				print((*s.enemies)[currentEnemy].Health)
 			}
 		} else if currentDice != -1 {
 			dice := s.playerDice[currentDice]
@@ -126,7 +146,7 @@ func (s *BattleScene) Update() engine.SceneId {
 				targets := make([]entities.BattleActor, 0)
 				switch wall.Flavor {
 				case entities.Salty:
-					for _, enemy := range s.enemies {
+					for _, enemy := range *s.enemies {
 						targets = append(targets, enemy)
 					}
 					s.player.Action(wall, targets)
@@ -140,13 +160,9 @@ func (s *BattleScene) Update() engine.SceneId {
 			} else {
 				println("Not enough mana")
 			}
-		} else if s.endTurnButton.Rect.IsPointInside(x, y) {
-			for _, enemy := range s.enemies {
-				enemy.Action(s.player)
-			}
-			s.player.AddMana(15)
 		}
 	}
+	s.button.Update()
 	return BattleSceneId
 }
 
